@@ -1,0 +1,32 @@
+{
+  "name": "bb-plugin-compact-panes",
+  "version": "0.6.0",
+  "type": "module",
+  "description": "Tighter desktop split-pane headers and composers, with readable text and unchanged touch controls.",
+  "engines": {
+    "bb": ">=0.42",
+    "bbPluginSdk": ">=0.4.47"
+  },
+  "bb": {
+    "name": "Compact UI",
+    "description": "Tighter desktop pane headers and composer spacing. Disable independently to restore stock spacing.",
+    "branding": {
+      "icon": "GridView"
+    },
+    "server": "./server.ts",
+    "app": "./app.tsx"
+  },
+  "scripts": {
+    "build": "bb plugin build",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@get-bb/plugin-sdk": "0.4.47",
+    "typescript": "^5.7.0",
+    "@types/node": "^22.0.0",
+    "@types/react": "^19.0.0"
+  },
+  "dependencies": {
+    "zod": "^4.3.6"
+  }
+}

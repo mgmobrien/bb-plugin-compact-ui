@@ -1,0 +1,125 @@
+/* Shared, namespaced accent tokens. Either plugin works on its own.
+   Relative colour clamps keep very dark/light custom accents legible. */
+html {
+  --bb-workspace-tint: var(--bb-workspace-accent, var(--success));
+  --bb-workspace-foreground: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 45%, var(--ink)) min(l, 0.50) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
+  --bb-workspace-indicator: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 60%, var(--ink)) min(l, 0.56) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
+}
+
+/* Attribute-only selectors reach host DOM outside plugin roots.
+   Fine pointers + desktop width keep touch targets unchanged. */
+@media (min-width: 768px) and (pointer: fine) {
+  html[data-bb-compact-panes] [data-split-pane-id] header:has(> [data-testid="app-page-header-content-row"]) {
+    --bb-app-chrome-row-height: 2.5rem;
+    padding-left: 0.5rem;
+    padding-right: 0.5rem;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] {
+    column-gap: 0.25rem;
+  }
+  /* Preserve collapsed/voice composers and the right-side control reserve. */
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-editor-scroll] {
+    padding-left: 0.5rem;
+    padding-top: 0.5rem;
+    /* Remove the empty 32px banner allowance; content can still grow. */
+    min-height: 68px !important;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] {
+    gap: 0.5rem;
+    padding-left: 0.625rem;
+    padding-top: 0.125rem;
+    padding-bottom: 0.25rem;
+  }
+
+  /* Defeat bb's narrow/short-pane CSS collapse as a unit. Real mobile and
+     explicit manual collapse remain host-owned. No synthetic focus. */
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] {
+    --follow-up-composer-container-compact: false;
+  }
+
+  /* BottomAnchoredScrollBody's content wrapper carries this inline token. */
+  html[data-bb-compact-panes] [data-split-pane-id] [data-thread-window] [style*="--md-content-w"] {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-bottom: 4px !important;
+  }
+
+  /* PageShell's static footer: outer surface, then padded inner wrapper. */
+  html[data-bb-compact-panes] [data-split-pane-id] [data-thread-window] [data-scroll-footer] > div > div:has([data-follow-up-composer]) {
+    padding-left: 4px;
+    padding-right: 4px;
+    padding-bottom: 2px;
+  }
+
+  /* Keep the existing divider geometry and drag hit target. */
+  html[data-bb-compact-panes] [data-split-resize-grid-boundary][role="separator"] {
+    background-color: color-mix(in oklab, var(--ink) 40%, var(--background));
+  }
+  html[data-bb-compact-panes] [data-split-resize-grid-boundary][role="separator"]:hover,
+  html[data-bb-compact-panes] [data-split-resize-grid-boundary][role="separator"][data-dragging] {
+    background-color: color-mix(in oklab, var(--bb-workspace-tint) 65%, var(--ink));
+  }
+
+  /* Small desktop toolbar controls; menus portal outside this subtree. */
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button {
+    height: 24px;
+    min-height: 24px;
+    width: auto;
+    min-width: 24px;
+    padding: 0 4px;
+    column-gap: 3px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button,
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button span {
+    font-size: 11px;
+    line-height: 14px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button svg {
+    width: 12px;
+    height: 12px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] [data-promptbox-submit-action] {
+    width: 24px;
+    min-width: 24px;
+    max-width: 24px;
+    padding: 0;
+  }
+
+  /* Environment, folder, permission and context strip below the form. */
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] {
+    min-height: 20px;
+    max-height: 20px;
+    margin-top: 2px;
+    padding-left: 4px;
+    padding-right: 4px;
+    gap: 4px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] :is(div, span, button, a) {
+    font-size: 10px;
+    line-height: 12px;
+    column-gap: 3px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] div {
+    height: auto;
+    min-height: 0;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] button {
+    height: 20px;
+    min-height: 20px;
+    width: auto;
+    min-width: 20px;
+    margin: 0;
+    padding: 0 3px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] svg,
+  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] [role="img"] {
+    width: 12px;
+    height: 12px;
+  }
+
+  /* Reuse bb's existing non-interactive pane scrim, above opaque descendants.
+     Only outermost panes qualify; side-panel focus must not add a second tint. */
+  html[data-bb-compact-panes] [data-split-pane-id][data-focused="true"]:not([data-split-pane-id] *) > [data-pane-focus-scrim] {
+    background-color: color-mix(in oklab, var(--bb-workspace-tint) 3%, transparent);
+  }
+}
