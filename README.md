@@ -24,7 +24,7 @@ Choose Green, Blue, Violet, Rose, Amber or Teal, enter a six-digit hex color, or
 
 The accent follows the current project on supported headers, selected-pane backgrounds, dividers and composer focus treatments. Workspaces sidebar decorations share it when installed. No global success/error color token is changed. Light and dark tones adapt to bb's theme; contrast still depends on a custom theme's backgrounds and text colors.
 
-Seven checkboxes control project headings, thread titles, active-workspace rails, the hover wash on open groups, pane header color, pane background wash and text input glow. Pane header color and text input glow control treatments provided by Workspaces when that separate plugin is installed; background wash is provided by Compact UI. **None** disables per-project coloring without discarding the saved mode or project assignments.
+Eight checkboxes control project headings, thread titles, active-workspace rails, the hover wash on open groups, pane header color, pane background wash, text input glow and project group shading. Project group shading adds a faint persistent tint behind each project’s sidebar group; the hover wash remains a separate control. Pane header color and text input glow control treatments provided by Workspaces when that separate plugin is installed; background wash is provided by Compact UI. **None** disables per-project coloring without discarding the saved mode or project assignments.
 
 ## Install from source
 

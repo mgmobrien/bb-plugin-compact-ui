@@ -221,6 +221,49 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
     padding-left: 0.25rem;
   }
 
+  /* 0.9.5: resting project-group shading. Each project's whole group (the
+     heading and its thread rows; the heading alone when collapsed) sits on a
+     faint persistent wash in that project's own accent: 4% of
+     --bb-workspace-tint over --sidebar. The tint is re-declared on the
+     [data-sidebar-project-id] parent (0.8.0), so in per-project mode every
+     group resolves its own color; in single-color mode every group takes the
+     window accent; with None it is a faint grey. The group already carries
+     bb's rounded-md (TopLevelSidebarSection); the radius is restated so the
+     wash keeps that corner if the host class changes. The sticky label tier,
+     its ::after shield and any sticky parent row paint opaque --sidebar
+     (bg-sidebar), so they get the same opaque mix, excluding the rows the
+     0.7.2 hover block excludes ([data-workspace-active] keeps its own fill; a
+     hovered, open-menu or selected parent row keeps bb's state surface).
+     The label's ::before shield (the strip above the heading, sized by the
+     stack's top padding) is left on stock --sidebar on purpose: unstuck it
+     lies over the gap between groups, which must stay stock. The stack's top
+     padding is set to the 6px group gap and the label's top shield is sized
+     from that top padding (bb sizes it from the 8px side padding), so the
+     shield covers exactly the gap, and the strip above a stuck heading, and
+     never the previous group's bottom edge. The 0.7.2 hover block
+     repaints the same surfaces at 6% on a hovered expanded group; its
+     selectors carry :has() and :hover, so they are more specific and also
+     come later. Built-in Threads/Pinned sections have no project wrapper and
+     get no wash. Gated by the Project group shading toggle
+     (html[data-bb-accent-groups="off"] while off). */
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] {
+    --bb-sidebar-sticky-stack-padding-top: 0.375rem;
+  }
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] [data-sidebar-sticky-tier="label"] {
+    --bb-sidebar-sticky-tier-shield-top-height: var(--bb-sidebar-sticky-stack-padding-top);
+  }
+  html[data-bb-compact-panes]:not([data-bb-accent-groups="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group] {
+    background-color: color-mix(in oklab, var(--bb-workspace-tint) 4%, var(--sidebar));
+    border-radius: calc(var(--radius) - 2px);
+  }
+  html[data-bb-compact-panes]:not([data-bb-accent-groups="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group] > [data-sidebar-sticky-tier="label"]:not([data-workspace-active]),
+  html[data-bb-compact-panes]:not([data-bb-accent-groups="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group] > [data-sidebar-sticky-tier="label"]::after,
+  html[data-bb-compact-panes]:not([data-bb-accent-groups="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group] [data-sidebar-sticky-tier="parent"]:not(:hover):not(:has([data-state="open"])):not(:has(> a[aria-current="page"])),
+  html[data-bb-compact-panes]:not([data-bb-accent-groups="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group] [data-sidebar-sticky-tier="parent"]::before,
+  html[data-bb-compact-panes]:not([data-bb-accent-groups="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group] [data-sidebar-sticky-tier="parent"]::after {
+    background-color: color-mix(in oklab, var(--bb-workspace-tint) 4%, var(--sidebar));
+  }
+
   /* 0.7.2: hover wash on an expanded project group. The chevron button in
      the heading carries aria-expanded, so collapsed groups and the trailing
      controls (whose menu trigger sits under [data-sidebar-trailing-controls],
@@ -249,7 +292,9 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
      A selected or open-in-split sticky row also paints an opaque
      background-image above background-color, so it is unaffected either way.
      0.9.0: the whole list is gated by the Hover wash toggle via
-     html:not([data-bb-accent-hover="off"]). */
+     html:not([data-bb-accent-hover="off"]). 0.9.5: the resting 4% shading
+     above is the same selector set without :has(aria-expanded)/:hover and
+     without the label ::before; these hover rules outrank it. */
 
   /* 0.7.1: in project mode each project item is a direct child of
      SidebarSectionOrderList's space-y-4 wrapper (no [data-sidebar="menu"]),

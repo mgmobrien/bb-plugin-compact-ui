@@ -148,6 +148,7 @@ const OPTION_LABELS: Record<AccentOptionKey, string> = {
   header: "Pane header color",
   wash: "Pane background wash",
   input: "Text input glow",
+  groups: "Project group shading",
 };
 
 function AccentSettings() {
