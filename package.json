@@ -1,15 +1,15 @@
 {
   "name": "bb-plugin-compact-panes",
-  "version": "0.6.0",
+  "version": "0.9.0",
   "type": "module",
-  "description": "Tighter desktop split-pane headers and composers, with readable text and unchanged touch controls.",
+  "description": "Tighter desktop panes, composer and sidebar, plus a configurable workspace accent.",
   "engines": {
     "bb": ">=0.42",
     "bbPluginSdk": ">=0.4.47"
   },
   "bb": {
     "name": "Compact UI",
-    "description": "Tighter desktop pane headers and composer spacing. Disable independently to restore stock spacing.",
+    "description": "Tighter desktop panes, composer and sidebar, plus a themeable workspace accent.",
     "branding": {
       "icon": "GridView"
     },

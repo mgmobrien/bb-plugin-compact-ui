@@ -1,31 +1,34 @@
 # Compact UI for bb
 
-Tighter desktop panes, a steady composer and a configurable accent for [bb](https://github.com/get-bb/bb).
+Fit more threads and pane content on screen with tighter spacing and a configurable workspace accent.
 
-This is the published v0.6.0 implementation, displayed here as **Compact UI**. Its package and plugin identity remain `bb-plugin-compact-panes` / `compact-panes`, so the display-name change does not move existing settings to a new data directory. The installed v0.6.0 may still display “Compact Panes”.
+The package is named `bb-plugin-compact-panes` and its bb ID remains `compact-panes`. The displayed name is **Compact UI**. It works independently and shares accent colors with [Workspaces](https://github.com/mgmobrien/bb-plugin-workspaces) when that plugin is installed.
 
-## What it changes
+## Compact spacing
 
-- Pane headers shrink from 48px to 40px.
-- Desktop composers keep the model selector and send controls visible instead of sliding upward on focus in narrow/short panes. Explicit manual collapse and mobile behaviour stay host-owned.
-- Model/tool controls use 11px labels and 24px targets; the send button is 24×24px.
-- The folder/environment strip uses 10px labels in a 20px row.
-- Smaller side and bottom padding returns space to conversation content. The editor keeps a 68px minimum and can grow for longer drafts.
-- Pane dividers are more visible; the selected main pane gets a faint 3% accent wash. Nested side panels do not receive an extra wash.
+- Shorter pane and right-panel headers with smaller controls.
+- Tighter expanded composers, toolbars, environment strips and outer pane padding.
+- Expanded tool cards, message action strips and user bubbles use less vertical space.
+- Denser sidebar rows, project headings and nesting, while preserving bb's sticky-heading behavior.
+- Expanded desktop split composers keep their controls visible instead of expanding on focus.
 
-Spacing rules apply only at desktop widths (768px+) with a fine pointer. Voice-active and manually collapsed composer controls retain their host sizing. Disabling the plugin removes its compact-UI marker and restores the host’s spacing.
+Most pane rules apply at desktop widths with a fine pointer and use bb's pane markers. Mobile/touch layouts, manually collapsed composers and voice controls retain their host behavior. Text content, keyboard shortcuts, drag targets and conversation virtualization remain owned by bb.
 
 ## Accent settings
 
-Open **Settings → Plugins → Compact UI → Workspace accent**. Choose Green, Blue, Violet, Rose, Amber or Teal, or use the native colour picker/hex field and **Apply**. Presets save immediately; custom colours save on Apply. **Reset to green** restores bb’s theme-native green.
+Open **Compact UI** from the sidebar or Settings → Plugins → Compact UI. Both entry points use the same settings and live synchronization.
 
-The accent is stored in this plugin’s bb-managed key/value storage and updates connected windows. Invalid input is rejected, and save errors are displayed. A fresh window can briefly show green while its saved accent loads.
+Choose Green, Blue, Violet, Rose, Amber or Teal, enter a six-digit hex color, or choose **None** for theme-native monochrome. Presets save immediately; custom colors use **Apply**. Reset restores bb's theme-native green.
 
-When [Workspaces](https://github.com/mgmobrien/bb-plugin-workspaces) is installed, the same accent controls its sidebar rail/icon/title, pane headers and input glow. Compact UI alone supplies the tighter spacing, dividers and selected-pane tint. Neither plugin changes bb’s global success/error colours. Disabling Compact UI returns Workspaces to its native green fallback.
+**Per project** assigns distinct project colors and saves them on the plugin server. Adding a project leaves existing assignments unchanged. **Shuffle colors** reassigns the known projects. As the number of projects grows, the available separation between colors decreases. Personal threads and surfaces without a project use the fallback accent.
+
+The accent follows the current project on supported headers, selected-pane backgrounds, dividers and composer focus treatments. Workspaces sidebar decorations share it when installed. No global success/error color token is changed. Light and dark tones adapt to bb's theme; contrast still depends on a custom theme's backgrounds and text colors.
+
+Four checkboxes control project headings, thread titles, active-workspace rails and the hover wash on open groups. **None** disables per-project coloring without discarding the saved mode or project assignments.
 
 ## Install from source
 
-Requires bb 0.42+ and Node/npm. This snapshot was exercised with bb 0.42.1 and plugin SDK 0.4.47.
+Requires bb 0.42+ and plugin SDK 0.4.47. Host selectors were developed against bb 0.42.1.
 
 ```sh
 git clone https://github.com/mgmobrien/bb-plugin-compact-ui.git
@@ -36,14 +39,10 @@ npm run build
 bb plugin install .
 ```
 
-Keep this directory at a durable location: local-path installation reads its source here. If you already have `compact-panes`, install this source under that same package identity rather than removing the plugin and its saved setting.
+## Data and compatibility
 
-## Compatibility and verification
+Accent settings and project-to-hue assignments live in bb-managed plugin storage and synchronize to connected windows. No external account or service is required. Failed saves show an error; native green may appear briefly while saved settings load.
 
-The styling uses host DOM attributes and CSS variables, including composer container-query flags. These are not all stable public SDK contracts; bb updates may need corresponding changes. The 10px footer text is deliberately compact and may be too small for some users.
-
-Source review and isolated Chromium fixtures checked steady composer geometry, toolbar/footer sizing, padding, selected-pane scoping and accent behaviour. Tests of the actual React settings component used a mocked SDK transport; colour samples used compiled plugin CSS and bb’s installed CSS in Chromium. Across six presets and additional light/dark test colours, green remained pixel-identical and measured title/indicator contrast cleared 4.5:1/3:1 in the default themes. Custom themes were not validated.
-
-Private fixture artifacts and live settings are not included in this repository. Upcoming sidebar spacing/heading/hover changes are not part of v0.6.0.
+This plugin depends on internal host CSS and DOM attributes. A bb update can require selector changes. Disabling it removes its styles and content-script decorations; saved settings remain available for re-enabling it. It does not patch the bb application.
 
 Built with **MattBot — Matt’s AI assistant (GPT-6 Astra today)**.

@@ -1,6 +1,19 @@
 /* Shared, namespaced accent tokens. Either plugin works on its own.
-   Relative colour clamps keep very dark/light custom accents legible. */
+   Relative color clamps keep very dark/light custom accents legible. */
 html {
+  --bb-workspace-tint: var(--bb-workspace-accent, var(--success));
+  --bb-workspace-foreground: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 45%, var(--ink)) min(l, 0.50) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
+  --bb-workspace-indicator: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 60%, var(--ink)) min(l, 0.56) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
+}
+
+/* 0.8.0: per-project accents. The overlay writes --bb-workspace-accent inline
+   on each sidebar [data-sidebar-project-id] element. Custom properties resolve
+   where they are declared, so the html-level tokens above would carry the
+   window color into every project; re-declaring them on the project element
+   makes the same expressions resolve against that element's own accent.
+   Without an inline accent the declarations resolve to the inherited
+   window value, so single-color mode is unchanged. */
+html[data-bb-compact-panes] [data-sidebar-project-id] {
   --bb-workspace-tint: var(--bb-workspace-accent, var(--success));
   --bb-workspace-foreground: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 45%, var(--ink)) min(l, 0.50) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
   --bb-workspace-indicator: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 60%, var(--ink)) min(l, 0.56) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
@@ -9,13 +22,52 @@ html {
 /* Attribute-only selectors reach host DOM outside plugin roots.
    Fine pointers + desktop width keep touch targets unchanged. */
 @media (min-width: 768px) and (pointer: fine) {
+  /* 0.7.5: 28px row with 24px controls and 2px clearance per side.
+     The header carries no vertical padding of its own; the row height is
+     the only vertical governor. */
   html[data-bb-compact-panes] [data-split-pane-id] header:has(> [data-testid="app-page-header-content-row"]) {
-    --bb-app-chrome-row-height: 2.5rem;
+    --bb-app-chrome-row-height: 1.75rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
   html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] {
     column-gap: 0.25rem;
+    /* bb nudges macOS chrome controls 2px down (--bb-macos-chrome-control-y)
+       to meet the 48px-row traffic-light axis; in a 32px row that lands the
+       28px buttons on the seam border, so centre them instead. */
+    --bb-macos-chrome-control-y: 0px;
+  }
+  /* While renaming, the title wrapper holds an inline-level input instead
+     of the block <p>, so its line box takes the document strut (16px x 1.5 =
+     24px) and the focus tab would paint edge to edge in a 32px row. Give the
+     wrapper the title's own text-sm metrics only in that state; the input
+     uses leading-[inherit] and follows. Title font size is unchanged. */
+  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] > div > div > div:has(> input) {
+    font-size: var(--text-sm);
+    line-height: var(--text-sm--line-height);
+  }
+  /* The window panel toggle floats over the top-right pane header
+     (absolute top-2.5, sized for a 48px row); recentre it on the 32px row.
+     Only when the host is actually rendering split-pane markers. */
+  html[data-bb-compact-panes] [data-testid="split-workspace-panel-toggle"]:has(+ [data-split-resize-grid-root] [data-split-pane-id]) {
+    top: 0.125rem;
+  }
+  /* Compact only header controls; menu content is portalled elsewhere.
+     Square icon controls keep their aspect ratio; text actions keep width. */
+  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] button,
+  html[data-bb-compact-panes] [data-testid="split-workspace-panel-toggle"]:has(+ [data-split-resize-grid-root] [data-split-pane-id]) button {
+    height: 24px;
+    min-height: 24px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] :is(button, span[aria-hidden="true"]):is([class~="w-[28px]"], [class~="w-7"]),
+  html[data-bb-compact-panes] [data-testid="split-workspace-panel-toggle"]:has(+ [data-split-resize-grid-root] [data-split-pane-id]) button {
+    width: 24px;
+    min-width: 24px;
+    height: 24px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] > div > div > div:has(> :is(p, input)) {
+    padding-top: 2px;
+    padding-bottom: 2px;
   }
   /* Preserve collapsed/voice composers and the right-side control reserve. */
   html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-editor-scroll] {
@@ -122,4 +174,156 @@ html {
   html[data-bb-compact-panes] [data-split-pane-id][data-focused="true"]:not([data-split-pane-id] *) > [data-pane-focus-scrim] {
     background-color: color-mix(in oklab, var(--bb-workspace-tint) 3%, transparent);
   }
+
+  /* Sidebar rows: bb derives every sticky offset from these stack-scoped
+     tokens, so overriding them here keeps stuck headings aligned. */
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] {
+    --bb-sidebar-row-height: 1.5rem;
+    --bb-sidebar-sticky-label-height: 1.375rem;
+    --bb-sidebar-sticky-label-gap: 0.125rem;
+    --bb-sidebar-sticky-row-gap: 0.125rem;
+    --bb-sidebar-sticky-child-row-gap: 0.0625rem;
+  }
+  /* Two Tailwind gaps that are not tokens: the project list menu (gap-1) and
+     the children wrapper rendered right after a section heading (mt-1). */
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] [data-sidebar="menu"]:has([data-sidebar-project-id]) {
+    gap: 0.125rem;
+  }
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] [data-sidebar-sticky-group] > [data-sidebar-sticky-tier="label"] + div {
+    margin-top: 0.125rem;
+  }
+
+  /* Project headings read as headings. Workspaces marks the active project
+     with [data-workspace-active] on the same tier; leave its color alone. */
+  html[data-bb-compact-panes] [data-sidebar-project-id] [data-sidebar-sticky-tier="label"] > span > span[title] {
+    font-weight: 600;
+    font-size: 0.8125rem;
+  }
+  html[data-bb-compact-panes] [data-sidebar-project-id] [data-sidebar-sticky-tier="label"]:not([data-workspace-active]) > span > span[title] {
+    color: var(--sidebar-foreground);
+  }
+  /* Outdent the heading (pl-2) relative to thread rows, whose inline
+     paddingLeft is depth-based and stays untouched. */
+  html[data-bb-compact-panes] [data-sidebar-project-id] > [data-sidebar-sticky-group] > [data-sidebar-sticky-tier="label"] {
+    padding-left: 0.25rem;
+  }
+
+  /* 0.7.2: hover wash on an expanded project group. The chevron button in
+     the heading carries aria-expanded, so collapsed groups and the trailing
+     controls (whose menu trigger sits under [data-sidebar-trailing-controls],
+     not directly under the first span) never trigger it. bb's sticky tiers
+     (the label heading and any pinned parent thread / environment / worktree
+     row, tier="parent") paint opaque --sidebar via bg-sidebar, and their
+     ::before/::after shields do the same, so the wash cannot show through
+     them. Paint those surfaces the same opaque tinted color instead: the
+     shields still hide scrolled content and the group reads as one wash.
+     The group color is the same opaque mix; it sits on the --sidebar pane,
+     so this equals a 6% transparent wash and avoids any seam. */
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover,
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover > [data-sidebar-sticky-tier="label"]:not([data-workspace-active]),
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover > [data-sidebar-sticky-tier="label"]::before,
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover > [data-sidebar-sticky-tier="label"]::after,
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover [data-sidebar-sticky-tier="parent"]:not(:hover):not(:has([data-state="open"])):not(:has(> a[aria-current="page"])),
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover [data-sidebar-sticky-tier="parent"]::before,
+  html[data-bb-compact-panes]:not([data-bb-accent-hover="off"]) [data-sidebar-project-id] > [data-sidebar-sticky-group]:has(> [data-sidebar-sticky-tier="label"] > span > button[aria-expanded="true"]):hover [data-sidebar-sticky-tier="parent"]::after {
+    background-color: color-mix(in oklab, var(--bb-workspace-tint) 6%, var(--sidebar));
+  }
+  /* Rows that carry their own state surface keep it: the Workspaces active
+     heading ([data-workspace-active]) is excluded above; a hovered parent row
+     keeps bb's hover:bg-sidebar-accent, an open row menu keeps
+     has-[[data-state=open]]:bg-sidebar-accent, and the selected thread row
+     (react-router NavLink sets aria-current="page") keeps bg-state-active.
+     A selected or open-in-split sticky row also paints an opaque
+     background-image above background-color, so it is unaffected either way.
+     0.9.0: the whole list is gated by the Hover wash toggle via
+     html:not([data-bb-accent-hover="off"]). */
+
+  /* 0.7.1: in project mode each project item is a direct child of
+     SidebarSectionOrderList's space-y-4 wrapper (no [data-sidebar="menu"]),
+     so Tailwind's zero-specificity :where(.space-y-4>:not(:last-child))
+     puts 1rem of margin-block-end under every project group. Trim it to a
+     quarter row; the heading's own 2px label gap collapses into this. */
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] [data-sidebar-sticky-project-item]:not(:last-child) {
+    margin-block-end: 0.375rem;
+  }
+
+  /* 0.7.4: the built-in Threads and Pinned sections (BuiltInSidebarSection ->
+     TopLevelSidebarSection) render their SidebarStickyGroup directly under
+     the same space-y-4 wrapper as the project items, with no
+     [data-sidebar-project-id] wrapper and no data-sidebar-section-id (the
+     sortable wrapper consumes the id), so none of the project rules above
+     reach them. Match the group as a direct child of that wrapper: full
+     sidebar ink at the stock label size and weight, the same 4px outdent,
+     and the same 6px trailing gap as a project item. */
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] > [data-sidebar="group-content"] > div > [data-sidebar-sticky-group] > [data-sidebar-sticky-tier="label"] > span > span[title] {
+    color: var(--sidebar-foreground);
+  }
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] > [data-sidebar="group-content"] > div > [data-sidebar-sticky-group] > [data-sidebar-sticky-tier="label"] {
+    padding-left: 0.25rem;
+  }
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] > [data-sidebar="group-content"] > div > [data-sidebar-sticky-group]:not(:last-child) {
+    margin-block-end: 0.375rem;
+  }
+}
+
+/* Tool/command detail cards only. Keep list gaps in sync with bb's
+   windowing calculations, and leave conversation code blocks alone. */
+@media (min-width: 768px) and (pointer: fine) {
+  html[data-bb-compact-panes] [data-split-pane-id] [data-timeline-row-id] :is(
+    [class~="bg-card"] > div[class~="font-mono"][class~="px-4"][class~="py-3"],
+    [data-detail-scroll-area][class~="font-mono"][class~="px-4"][class~="py-3"]
+  ):not([data-message-column] *) {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-timeline-row-id] [data-detail-scroll-area][class~="font-mono"][class~="px-4"][class~="py-3"] > div > div[class~="border-t"][class~="mt-2"][class~="pt-2"]:has(> pre):not([data-message-column] *) {
+    margin-top: 4px;
+    padding-top: 4px;
+  }
+}
+
+@media (min-width: 768px) and (pointer: fine) {
+  html[data-bb-compact-panes] [data-testid="thread-secondary-panel-top-chrome"] {
+    --bb-app-chrome-row-height: 1.75rem;
+    --bb-macos-chrome-control-y: 0px;
+    padding-left: 8px;
+    padding-right: 8px;
+    column-gap: 4px;
+  }
+  html[data-bb-compact-panes] [data-testid="thread-secondary-panel-top-chrome"] :is(button, [role="tab"], [class~="h-7"]) {
+    height: 24px;
+    min-height: 24px;
+  }
+  html[data-bb-compact-panes] [data-testid="thread-secondary-panel-top-chrome"] :is([class~="w-[28px]"], [class~="w-7"]) {
+    width: 24px;
+    min-width: 24px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-message-column] [class~="relative"][class~="w-full"][class~="h-5"]:has(> [class~="absolute"][class~="top-0"]) {
+    height: 18px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-message-column] [class~="relative"][class~="w-full"][class~="h-5"] > [class~="absolute"][class~="top-0"] button[class~="size-5"] {
+    height: 18px;
+  }
+  html[data-bb-compact-panes] [data-split-pane-id] [data-message-column] [class~="rounded-xl"][class~="bg-surface-recessed"][class~="py-2.5"] {
+    padding-top: 6px;
+    padding-bottom: 6px;
+  }
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] [data-bb-compact-sidebar-offset="row"] {
+    padding-left: var(--bb-compact-sidebar-offset) !important;
+  }
+  html[data-bb-compact-panes] [data-sidebar-sticky-stack] [data-bb-compact-sidebar-offset="line"] {
+    left: var(--bb-compact-sidebar-offset) !important;
+  }
+}
+
+/* 0.8.2: thread titles take a muted version of their project's accent (60%
+   toward the sidebar ink). The selected row keeps bb's own color. */
+/* Thread tint, variant B (muted): same target as variant A, but the title
+   color is 60% of the project's --bb-workspace-foreground mixed with bb's
+   --sidebar-foreground in OKLab, so titles sit closer to the sidebar ink
+   while still grouping under their heading. Selected rows excluded. */
+/* 0.9.0: gated by the Thread titles toggle (html[data-bb-accent-threads="off"]
+   is set by the overlay only while the toggle is off). */
+html[data-bb-compact-panes]:not([data-bb-accent-threads="off"]) [data-sidebar-project-id] a[data-sidebar-thread-id]:not([aria-current="page"]) + span > span[title] {
+  color: color-mix(in oklab, var(--bb-workspace-foreground) 60%, var(--sidebar-foreground));
 }
