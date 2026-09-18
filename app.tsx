@@ -145,6 +145,9 @@ const OPTION_LABELS: Record<AccentOptionKey, string> = {
   threads: "Thread titles",
   rails: "Active workspace rails",
   hover: "Hover wash on open groups",
+  header: "Pane header color",
+  wash: "Pane background wash",
+  input: "Text input glow",
 };
 
 function AccentSettings() {

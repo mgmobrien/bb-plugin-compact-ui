@@ -1,6 +1,6 @@
 {
   "name": "bb-plugin-compact-panes",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "type": "module",
   "description": "Tighter desktop panes, composer and sidebar, plus a configurable workspace accent.",
   "engines": {

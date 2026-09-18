@@ -5,8 +5,9 @@ import { ACCENT_MODES, ACCENT_OPTION_KEYS, DEFAULT_ACCENT, DEFAULT_MODE, EMPTY_H
 const value = z.string().refine((v) => normalizeAccent(v) !== null, "Choose a preset or a six-digit hex color.");
 const mode = z.enum(ACCENT_MODES);
 /* 0.9.0: which surfaces the accent colors (kv `accentOptions`). Reads always
-   return the full object; updates may send any subset. */
-const options = z.object({ headings: z.boolean(), threads: z.boolean(), rails: z.boolean(), hover: z.boolean() } satisfies Record<(typeof ACCENT_OPTION_KEYS)[number], z.ZodBoolean>);
+   return the full object; updates may send any subset. 0.9.3 adds header,
+   wash and input (pane header color, pane background wash, text input glow). */
+const options = z.object({ headings: z.boolean(), threads: z.boolean(), rails: z.boolean(), hover: z.boolean(), header: z.boolean(), wash: z.boolean(), input: z.boolean() } satisfies Record<(typeof ACCENT_OPTION_KEYS)[number], z.ZodBoolean>);
 const configuration = z.object({ accent: value, mode, options });
 /* Older clients send { accent } only; the stored mode and options are kept in that case. */
 const update = z.object({ accent: value.optional(), mode: mode.optional(), options: options.partial().optional() });

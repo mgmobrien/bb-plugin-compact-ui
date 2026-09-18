@@ -32,11 +32,14 @@ export function pickerColor(value: string): string {
 
 /* 0.9.0: which surfaces the accent colors. Stored as one object under
    `accentOptions`; every key defaults to on, so installs without the key and
-   partial updates from any client behave as before. */
-export const ACCENT_OPTION_KEYS = ["headings", "threads", "rails", "hover"] as const;
+   partial updates from any client behave as before. 0.9.3 adds the pane
+   surfaces: header (focused pane header gradient, Workspaces), wash (the 3%
+   selected-pane wash, Compact UI) and input (the composer focus glow,
+   Workspaces). The key order is the order of the settings checkboxes. */
+export const ACCENT_OPTION_KEYS = ["headings", "threads", "rails", "hover", "header", "wash", "input"] as const;
 export type AccentOptionKey = (typeof ACCENT_OPTION_KEYS)[number];
 export type AccentOptions = Record<AccentOptionKey, boolean>;
-export const DEFAULT_ACCENT_OPTIONS: AccentOptions = { headings: true, threads: true, rails: true, hover: true };
+export const DEFAULT_ACCENT_OPTIONS: AccentOptions = { headings: true, threads: true, rails: true, hover: true, header: true, wash: true, input: true };
 /* Merge a stored or submitted value over a base. Unknown keys are dropped and
    non-boolean values are ignored (the base wins), so a damaged record never
    switches a surface off by accident. */

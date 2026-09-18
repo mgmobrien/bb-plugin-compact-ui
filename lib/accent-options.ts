@@ -4,7 +4,7 @@ import { ACCENT_OPTION_KEYS, type AccentOptions } from "./accent";
    the stylesheets gate on. `data-bb-accent-<key>="off"` is present only while
    that surface is off and removed when it is on; passing all-on clears every
    attribute, which is what the overlay does on unmount. Pure: it only
-   touches these four attributes and never reads other state. */
+   touches the ACCENT_OPTION_KEYS attributes and never reads other state. */
 export function accentOptionAttribute(key: (typeof ACCENT_OPTION_KEYS)[number]): string {
   return `data-bb-accent-${key}`;
 }

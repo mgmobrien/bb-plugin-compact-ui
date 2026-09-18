@@ -180,8 +180,10 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
   }
 
   /* Reuse bb's existing non-interactive pane scrim, above opaque descendants.
-     Only outermost panes qualify; side-panel focus must not add a second tint. */
-  html[data-bb-compact-panes] [data-split-pane-id][data-focused="true"]:not([data-split-pane-id] *) > [data-pane-focus-scrim] {
+     Only outermost panes qualify; side-panel focus must not add a second tint.
+     0.9.3: gated by the Pane background wash toggle (html[data-bb-accent-wash="off"]
+     while off); off leaves bb's own transparent scrim. */
+  html[data-bb-compact-panes]:not([data-bb-accent-wash="off"]) [data-split-pane-id][data-focused="true"]:not([data-split-pane-id] *) > [data-pane-focus-scrim] {
     background-color: color-mix(in oklab, var(--bb-workspace-tint) 3%, transparent);
   }
 
@@ -346,12 +348,14 @@ html[data-bb-compact-panes]:not([data-bb-accent-threads="off"]) [data-sidebar-pr
    (SecondaryPanelLayout.tsx:298-311). Paint the same 3% wash there as an
    overlay pseudo-element on the scrim's layer (absolute inset-0, z-20,
    pointer-events none). The ancestor guard keeps split panes, and the
-   secondary panel that also emits pane markers, on their existing rules. */
+   secondary panel that also emits pane markers, on their existing rules.
+   0.9.3: both rules are gated by the Pane background wash toggle, so with
+   the wash off the single pane keeps bb's stock positioning and no overlay. */
 @media (min-width: 768px) and (pointer: fine) {
-  html[data-bb-compact-panes] [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window]) {
+  html[data-bb-compact-panes]:not([data-bb-accent-wash="off"]) [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window]) {
     position: relative;
   }
-  html[data-bb-compact-panes] [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])::after {
+  html[data-bb-compact-panes]:not([data-bb-accent-wash="off"]) [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])::after {
     content: "";
     position: absolute;
     inset: 0;
