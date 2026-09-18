@@ -19,18 +19,28 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
   --bb-workspace-indicator: light-dark(oklch(from color-mix(in oklab, var(--bb-workspace-tint) 60%, var(--ink)) min(l, 0.56) c h), oklch(from var(--bb-workspace-tint) max(l, 0.70) c h));
 }
 
+/* 0.9.2: pane root alias. With one pane open, SplitThreadArea renders
+   WorkspacePaneContent without a [data-split-pane-id] wrapper
+   (SplitThreadArea.tsx:603-625); the pane is SecondaryPanelLayout's main slot,
+   a [data-conversation-collapsed] div whose direct children are the thread
+   header and [data-thread-window]. Every layout rule below therefore keys on
+   :is([data-split-pane-id], <single-pane root>) so a single pane gets the same
+   compaction as a focused split pane. The :not([data-split-pane-id] *) guard
+   keeps split panes and the secondary panel (which also emits pane markers)
+   on the first branch, so split mode is unchanged. Dividers and the floating
+   panel toggle are split-only by nature and keep their plain keys. */
 /* Attribute-only selectors reach host DOM outside plugin roots.
    Fine pointers + desktop width keep touch targets unchanged. */
 @media (min-width: 768px) and (pointer: fine) {
   /* 0.7.5: 28px row with 24px controls and 2px clearance per side.
      The header carries no vertical padding of its own; the row height is
      the only vertical governor. */
-  html[data-bb-compact-panes] [data-split-pane-id] header:has(> [data-testid="app-page-header-content-row"]) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) header:has(> [data-testid="app-page-header-content-row"]) {
     --bb-app-chrome-row-height: 1.75rem;
     padding-left: 0.5rem;
     padding-right: 0.5rem;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) header > [data-testid="app-page-header-content-row"] {
     column-gap: 0.25rem;
     /* bb nudges macOS chrome controls 2px down (--bb-macos-chrome-control-y)
        to meet the 48px-row traffic-light axis; in a 32px row that lands the
@@ -42,7 +52,7 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
      24px) and the focus tab would paint edge to edge in a 32px row. Give the
      wrapper the title's own text-sm metrics only in that state; the input
      uses leading-[inherit] and follows. Title font size is unchanged. */
-  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] > div > div > div:has(> input) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) header > [data-testid="app-page-header-content-row"] > div > div > div:has(> input) {
     font-size: var(--text-sm);
     line-height: var(--text-sm--line-height);
   }
@@ -54,29 +64,29 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
   }
   /* Compact only header controls; menu content is portalled elsewhere.
      Square icon controls keep their aspect ratio; text actions keep width. */
-  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] button,
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) header > [data-testid="app-page-header-content-row"] button,
   html[data-bb-compact-panes] [data-testid="split-workspace-panel-toggle"]:has(+ [data-split-resize-grid-root] [data-split-pane-id]) button {
     height: 24px;
     min-height: 24px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] :is(button, span[aria-hidden="true"]):is([class~="w-[28px]"], [class~="w-7"]),
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) header > [data-testid="app-page-header-content-row"] :is(button, span[aria-hidden="true"]):is([class~="w-[28px]"], [class~="w-7"]),
   html[data-bb-compact-panes] [data-testid="split-workspace-panel-toggle"]:has(+ [data-split-resize-grid-root] [data-split-pane-id]) button {
     width: 24px;
     min-width: 24px;
     height: 24px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] header > [data-testid="app-page-header-content-row"] > div > div > div:has(> :is(p, input)) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) header > [data-testid="app-page-header-content-row"] > div > div > div:has(> :is(p, input)) {
     padding-top: 2px;
     padding-bottom: 2px;
   }
   /* Preserve collapsed/voice composers and the right-side control reserve. */
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-editor-scroll] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-editor-scroll] {
     padding-left: 0.5rem;
     padding-top: 0.5rem;
     /* Remove the empty 32px banner allowance; content can still grow. */
     min-height: 68px !important;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] {
     gap: 0.5rem;
     padding-left: 0.625rem;
     padding-top: 0.125rem;
@@ -85,19 +95,19 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
 
   /* Defeat bb's narrow/short-pane CSS collapse as a unit. Real mobile and
      explicit manual collapse remain host-owned. No synthetic focus. */
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] {
     --follow-up-composer-container-compact: false;
   }
 
   /* BottomAnchoredScrollBody's content wrapper carries this inline token. */
-  html[data-bb-compact-panes] [data-split-pane-id] [data-thread-window] [style*="--md-content-w"] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-thread-window] [style*="--md-content-w"] {
     padding-left: 0 !important;
     padding-right: 0 !important;
     padding-bottom: 4px !important;
   }
 
   /* PageShell's static footer: outer surface, then padded inner wrapper. */
-  html[data-bb-compact-panes] [data-split-pane-id] [data-thread-window] [data-scroll-footer] > div > div:has([data-follow-up-composer]) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-thread-window] [data-scroll-footer] > div > div:has([data-follow-up-composer]) {
     padding-left: 4px;
     padding-right: 4px;
     padding-bottom: 2px;
@@ -113,7 +123,7 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
   }
 
   /* Small desktop toolbar controls; menus portal outside this subtree. */
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button {
     height: 24px;
     min-height: 24px;
     width: auto;
@@ -121,16 +131,16 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
     padding: 0 4px;
     column-gap: 3px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button,
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button span {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button,
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button span {
     font-size: 11px;
     line-height: 14px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button svg {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] button svg {
     width: 12px;
     height: 12px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] [data-promptbox-submit-action] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer] [data-promptbox]:not([data-promptbox-compact]):not([data-promptbox-voice-active]) [data-promptbox-action-row] [data-promptbox-submit-action] {
     width: 24px;
     min-width: 24px;
     max-width: 24px;
@@ -138,7 +148,7 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
   }
 
   /* Environment, folder, permission and context strip below the form. */
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer-footer] {
     min-height: 20px;
     max-height: 20px;
     margin-top: 2px;
@@ -146,16 +156,16 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
     padding-right: 4px;
     gap: 4px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] :is(div, span, button, a) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer-footer] :is(div, span, button, a) {
     font-size: 10px;
     line-height: 12px;
     column-gap: 3px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] div {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer-footer] div {
     height: auto;
     min-height: 0;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] button {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer-footer] button {
     height: 20px;
     min-height: 20px;
     width: auto;
@@ -163,8 +173,8 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
     margin: 0;
     padding: 0 3px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] svg,
-  html[data-bb-compact-panes] [data-split-pane-id] [data-follow-up-composer-footer] [role="img"] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer-footer] svg,
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-follow-up-composer-footer] [role="img"] {
     width: 12px;
     height: 12px;
   }
@@ -269,14 +279,14 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
 /* Tool/command detail cards only. Keep list gaps in sync with bb's
    windowing calculations, and leave conversation code blocks alone. */
 @media (min-width: 768px) and (pointer: fine) {
-  html[data-bb-compact-panes] [data-split-pane-id] [data-timeline-row-id] :is(
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-timeline-row-id] :is(
     [class~="bg-card"] > div[class~="font-mono"][class~="px-4"][class~="py-3"],
     [data-detail-scroll-area][class~="font-mono"][class~="px-4"][class~="py-3"]
   ):not([data-message-column] *) {
     padding-top: 6px;
     padding-bottom: 6px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-timeline-row-id] [data-detail-scroll-area][class~="font-mono"][class~="px-4"][class~="py-3"] > div > div[class~="border-t"][class~="mt-2"][class~="pt-2"]:has(> pre):not([data-message-column] *) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-timeline-row-id] [data-detail-scroll-area][class~="font-mono"][class~="px-4"][class~="py-3"] > div > div[class~="border-t"][class~="mt-2"][class~="pt-2"]:has(> pre):not([data-message-column] *) {
     margin-top: 4px;
     padding-top: 4px;
   }
@@ -298,13 +308,13 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
     width: 24px;
     min-width: 24px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-message-column] [class~="relative"][class~="w-full"][class~="h-5"]:has(> [class~="absolute"][class~="top-0"]) {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-message-column] [class~="relative"][class~="w-full"][class~="h-5"]:has(> [class~="absolute"][class~="top-0"]) {
     height: 18px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-message-column] [class~="relative"][class~="w-full"][class~="h-5"] > [class~="absolute"][class~="top-0"] button[class~="size-5"] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-message-column] [class~="relative"][class~="w-full"][class~="h-5"] > [class~="absolute"][class~="top-0"] button[class~="size-5"] {
     height: 18px;
   }
-  html[data-bb-compact-panes] [data-split-pane-id] [data-message-column] [class~="rounded-xl"][class~="bg-surface-recessed"][class~="py-2.5"] {
+  html[data-bb-compact-panes] :is([data-split-pane-id], [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])) [data-message-column] [class~="rounded-xl"][class~="bg-surface-recessed"][class~="py-2.5"] {
     padding-top: 6px;
     padding-bottom: 6px;
   }
@@ -326,4 +336,27 @@ html[data-bb-compact-panes] [data-sidebar-project-id] {
    is set by the overlay only while the toggle is off). */
 html[data-bb-compact-panes]:not([data-bb-accent-threads="off"]) [data-sidebar-project-id] a[data-sidebar-thread-id]:not([aria-current="page"]) + span > span[title] {
   color: color-mix(in oklab, var(--bb-workspace-foreground) 60%, var(--sidebar-foreground));
+}
+
+/* Single-pane parity (bb 0.42.1). With one pane open, SplitThreadArea renders
+   WorkspacePaneContent directly: no [data-split-pane-id] wrapper and no
+   [data-pane-focus-scrim] (SplitThreadArea.tsx:603-625). The pane content is
+   SecondaryPanelLayout's main slot, a [data-conversation-collapsed] div whose
+   direct children are the thread header and [data-thread-window]
+   (SecondaryPanelLayout.tsx:298-311). Paint the same 3% wash there as an
+   overlay pseudo-element on the scrim's layer (absolute inset-0, z-20,
+   pointer-events none). The ancestor guard keeps split panes, and the
+   secondary panel that also emits pane markers, on their existing rules. */
+@media (min-width: 768px) and (pointer: fine) {
+  html[data-bb-compact-panes] [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window]) {
+    position: relative;
+  }
+  html[data-bb-compact-panes] [data-conversation-collapsed]:not([data-split-pane-id] *):has(> header > [data-testid="app-page-header-content-row"]):has(> [data-thread-window])::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 20;
+    pointer-events: none;
+    background-color: color-mix(in oklab, var(--bb-workspace-tint) 3%, transparent);
+  }
 }

@@ -12,7 +12,7 @@ The package is named `bb-plugin-compact-panes` and its bb ID remains `compact-pa
 - Denser sidebar rows, project headings and nesting, while preserving bb's sticky-heading behavior.
 - Expanded desktop split composers keep their controls visible instead of expanding on focus.
 
-Most pane rules apply at desktop widths with a fine pointer and use bb's pane markers. Mobile/touch layouts, manually collapsed composers and voice controls retain their host behavior. Text content, keyboard shortcuts, drag targets and conversation virtualization remain owned by bb.
+Desktop pane rules apply to both split panes and a single thread pane at desktop widths with a fine pointer. Single-pane layouts receive the same spacing, accent background, header and composer-focus treatments. Mobile/touch layouts, manually collapsed composers and voice controls retain their host behavior. Text content, keyboard shortcuts, drag targets and conversation virtualization remain owned by bb.
 
 ## Accent settings
 
